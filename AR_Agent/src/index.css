@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #25314A transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #25314A;
+  border-radius: 999px;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #0B1120;
+  color: #ffffff;
+  font-family: Inter, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  .card {
+    @apply bg-card border border-line rounded-2xl shadow-card;
+  }
+
+  .card-hover {
+    @apply transition-all duration-200 hover:border-primary/40 hover:shadow-glow;
+  }
+
+  .page-title {
+    @apply font-display text-2xl sm:text-3xl font-semibold tracking-tight text-white;
+  }
+
+  .page-sub {
+    @apply mt-1 text-sm text-muted;
+  }
+
+  .soft-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-line bg-white/5 px-3 py-2 text-sm text-slate-200 transition hover:border-primary/40 hover:bg-white/10;
+  }
+
+  .icon-btn {
+    @apply flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-white/5 text-slate-300 transition hover:border-primary/40 hover:text-white;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium;
+  }
+}
+
+input,
+select,
+textarea,
+button {
+  font-family: inherit;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+}
