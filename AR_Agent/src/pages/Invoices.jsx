@@ -2,10 +2,11 @@ import { useState } from 'react'
 import { Eye, Filter, MoreHorizontal, Search, Send } from 'lucide-react'
 import { invoices } from '../data/invoices'
 
-const statusStyle = {
-  Paid: 'bg-success/15 text-success',
-  Pending: 'bg-warning/15 text-warning',
-  Overdue: 'bg-danger/15 text-danger',
+const statusBadge = {
+  Paid: 'badge-paid',
+  Pending: 'badge-pending',
+  Overdue: 'badge-overdue',
+  Processing: 'badge-processing',
 }
 
 function money(value) {
@@ -42,38 +43,43 @@ function Invoices() {
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[
-          ['Total Invoices', counts.Total, 'text-primary'],
-          ['Paid', counts.Paid, 'text-success'],
-          ['Pending', counts.Pending, 'text-warning'],
-          ['Overdue', counts.Overdue, 'text-danger'],
-        ].map(([label, value, color]) => (
-          <div key={label} className="card card-hover p-5">
-            <p className="text-sm text-muted">{label}</p>
-            <p className={`mt-2 font-display text-3xl font-semibold ${color}`}>{value}</p>
+          ['Total Invoices', counts.Total, '#2563EB'],
+          ['Paid', counts.Paid, '#22C55E'],
+          ['Pending', counts.Pending, '#F59E0B'],
+          ['Overdue', counts.Overdue, '#EF4444'],
+        ].map(([label, value, textColor]) => (
+          <div key={label} className="kpi-card">
+            <p className="kpi-label">{label}</p>
+            <p className="kpi-value" style={{ color: textColor, marginTop: '0.5rem' }}>{value}</p>
+            <div className="progress-bar mt-3">
+              <div
+                className="progress-fill"
+                style={{ width: `${Math.min(100, (value / invoices.length) * 100)}%`, background: textColor }}
+              />
+            </div>
           </div>
         ))}
       </div>
 
       <section className="card overflow-hidden">
-        <div className="flex flex-col gap-3 border-b border-line p-4 sm:flex-row sm:items-center">
-          <div className="relative flex-1">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
+        <div className="flex flex-col gap-3 border-b p-4 sm:flex-row sm:items-center sm:justify-between"
+             style={{ borderColor: 'var(--border)' }}>
+          <div className="relative w-full max-w-md">
+            <Search size={16} className="search-icon" />
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search invoice or customer"
-              className="w-full rounded-xl border border-line bg-[#0B1120] py-2.5 pl-10 pr-3 text-sm"
+              className="search-input w-full"
             />
           </div>
-          <div className="flex items-center gap-2">
-            <Filter size={14} className="text-muted" />
+          <div className="flex flex-wrap items-center gap-2">
+            <Filter size={14} style={{ color: 'var(--text-muted)' }} />
             {['All', 'Paid', 'Pending', 'Overdue'].map((item) => (
               <button
                 key={item}
                 onClick={() => setStatus(item)}
-                className={`rounded-xl px-3 py-2 text-xs font-medium transition ${
-                  status === item ? 'bg-primary text-white' : 'bg-white/5 text-slate-300 hover:bg-white/10'
-                }`}
+                className={`filter-pill ${status === item ? 'active' : ''}`}
               >
                 {item}
               </button>
@@ -82,35 +88,42 @@ function Invoices() {
         </div>
 
         {notice && (
-          <div className="border-b border-line bg-primary/10 px-4 py-2 text-xs text-slate-200">{notice}</div>
+          <div className="border-b px-4 py-2.5 text-xs"
+               style={{
+                 borderColor: 'var(--border)',
+                 background: 'rgba(37, 99, 235, 0.06)',
+                 color: 'var(--text-secondary)',
+               }}>
+            {notice}
+          </div>
         )}
 
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-left text-sm">
-            <thead className="bg-white/[0.03] text-xs uppercase tracking-wider text-muted">
+        <div className="table-wrapper" style={{ maxHeight: '600px' }}>
+          <table className="table">
+            <thead>
               <tr>
-                <th className="px-4 py-3 font-medium">Invoice No</th>
-                <th className="px-4 py-3 font-medium">Customer</th>
-                <th className="px-4 py-3 font-medium">Amount</th>
-                <th className="px-4 py-3 font-medium">Due Date</th>
-                <th className="px-4 py-3 font-medium">Status</th>
-                <th className="px-4 py-3 font-medium">Actions</th>
+                <th className="font-semibold">Invoice No</th>
+                <th className="font-semibold">Customer</th>
+                <th className="font-semibold">Amount</th>
+                <th className="font-semibold">Due Date</th>
+                <th className="font-semibold">Status</th>
+                <th className="font-semibold">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map((row) => (
-                <tr key={row.id} className="border-t border-line/80 transition hover:bg-white/[0.04]">
-                  <td className="px-4 py-3 font-medium text-primary">{row.id}</td>
-                  <td className="px-4 py-3">{row.customer}</td>
-                  <td className="px-4 py-3">{money(row.amount)}</td>
-                  <td className="px-4 py-3 text-muted">{row.dueDate}</td>
-                  <td className="px-4 py-3">
-                    <span className={`badge ${statusStyle[row.status]}`}>
+                <tr key={row.id}>
+                  <td className="font-semibold" style={{ color: '#2563EB' }}>{row.id}</td>
+                  <td style={{ color: 'var(--text)' }}>{row.customer}</td>
+                  <td style={{ color: 'var(--text)', fontWeight: 500 }}>{money(row.amount)}</td>
+                  <td>{row.dueDate}</td>
+                  <td>
+                    <span className={`badge ${statusBadge[row.status] || 'badge-processing'}`}>
                       <span className="h-1.5 w-1.5 rounded-full bg-current" />
                       {row.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
+                  <td>
                     <div className="flex items-center gap-1.5">
                       <button
                         className="icon-btn h-8 w-8"
@@ -139,21 +152,58 @@ function Invoices() {
       </section>
 
       {selected && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={() => setSelected(null)}>
-          <div className="card w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
-            <p className="text-xs uppercase tracking-widest text-muted">Invoice detail</p>
-            <h3 className="mt-1 font-display text-2xl font-semibold">{selected.id}</h3>
-            <div className="mt-4 space-y-2 text-sm text-slate-300">
-              <p>Customer: {selected.customer}</p>
-              <p>Email: {selected.email}</p>
-              <p>Amount: {money(selected.amount)}</p>
-              <p>Due: {selected.dueDate}</p>
-              <p>Aging: {selected.aging}</p>
-              <p>Status: {selected.status}</p>
+        <div className="modal-overlay" onClick={() => setSelected(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
+              Invoice Detail
+            </p>
+            <h3 className="mt-1 text-2xl font-bold" style={{ color: 'var(--text)' }}>{selected.id}</h3>
+            <div className="mt-5 grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <p className="form-label">Customer</p>
+                <p style={{ color: 'var(--text)' }}>{selected.customer}</p>
+              </div>
+              <div>
+                <p className="form-label">Email</p>
+                <p style={{ color: 'var(--text)' }}>{selected.email}</p>
+              </div>
+              <div>
+                <p className="form-label">Amount</p>
+                <p className="font-semibold" style={{ color: 'var(--text)' }}>{money(selected.amount)}</p>
+              </div>
+              <div>
+                <p className="form-label">Due Date</p>
+                <p style={{ color: 'var(--text)' }}>{selected.dueDate}</p>
+              </div>
+              <div>
+                <p className="form-label">Aging</p>
+                <p style={{ color: 'var(--text)' }}>{selected.aging}</p>
+              </div>
+              <div>
+                <p className="form-label">Status</p>
+                <span className={`badge ${statusBadge[selected.status] || 'badge-processing'}`}>
+                  <span className="h-1.5 w-1.5 rounded-full bg-current" />
+                  {selected.status}
+                </span>
+              </div>
             </div>
-            <button className="soft-btn mt-6 w-full" onClick={() => setSelected(null)}>
-              Close
-            </button>
+            <div className="mt-6 flex gap-3">
+              <button
+                className="btn-secondary flex-1"
+                onClick={() => setSelected(null)}
+              >
+                Close
+              </button>
+              <button
+                className="btn-primary flex-1"
+                onClick={() => {
+                  setNotice(`Reminder sent to ${selected.customer} for ${selected.id}.`)
+                  setSelected(null)
+                }}
+              >
+                Send Reminder
+              </button>
+            </div>
           </div>
         </div>
       )}

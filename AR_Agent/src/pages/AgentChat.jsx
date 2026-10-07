@@ -22,61 +22,57 @@ function AgentChat() {
   }
 
   return (
-    <div className="grid min-h-[calc(100vh-140px)] overflow-hidden rounded-3xl border border-line bg-card lg:grid-cols-[280px_1fr]">
-      <aside className="border-b border-line lg:border-b-0 lg:border-r">
-        <div className="border-b border-line p-4">
-          <p className="font-display text-sm font-semibold">Recent Conversations</p>
-          <p className="text-[11px] text-muted">Hardcoded demo threads</p>
+    <div className="grid min-h-[calc(100vh-140px)] overflow-hidden rounded-card border lg:grid-cols-[260px_1fr]"
+         style={{ borderColor: 'var(--border)', background: 'var(--card)' }}>
+      <aside className="border-b lg:border-b-0 lg:border-r" style={{ borderColor: 'var(--border)' }}>
+        <div className="border-b p-4" style={{ borderColor: 'var(--border)' }}>
+          <p className="text-sm font-bold" style={{ color: 'var(--text)' }}>Recent Conversations</p>
+          <p className="text-[11px]" style={{ color: 'var(--text-muted)' }}>Demo conversation threads</p>
         </div>
         <div className="space-y-1 p-2">
           {conversations.map((item) => (
             <button
               key={item.id}
               onClick={() => setActive(item.id)}
-              className={`w-full rounded-2xl px-3 py-3 text-left transition ${
-                active === item.id ? 'bg-primary/15 border border-primary/30' : 'hover:bg-white/5'
-              }`}
+              className={`conv-item ${active === item.id ? 'active' : ''}`}
             >
               <div className="flex items-center justify-between gap-2">
-                <p className="text-sm font-medium">{item.title}</p>
-                <span className="text-[11px] text-muted">{item.time}</span>
+                <p className="text-sm font-semibold" style={{ color: 'var(--text)' }}>{item.title}</p>
+                <span className="text-[11px]" style={{ color: 'var(--text-muted)' }}>{item.time}</span>
               </div>
-              <p className="mt-1 truncate text-xs text-muted">{item.preview}</p>
+              <p className="mt-1 truncate text-xs" style={{ color: 'var(--text-muted)' }}>{item.preview}</p>
             </button>
           ))}
         </div>
       </aside>
 
       <section className="flex min-h-[520px] flex-col">
-        <div className="flex items-center gap-3 border-b border-line px-5 py-4">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent">
+        <div className="flex items-center gap-3 border-b px-5 py-4" style={{ borderColor: 'var(--border)' }}>
+          <div className="flex h-10 w-10 items-center justify-center rounded-btn bg-primary text-white">
             <Sparkles size={16} />
           </div>
           <div>
-            <p className="text-sm font-semibold">AR Collection Agent</p>
-            <p className="text-[11px] text-success">Online · dummy responses only</p>
+            <p className="text-sm font-bold" style={{ color: 'var(--text)' }}>AR Collection Agent</p>
+            <p className="text-[11px] font-medium text-success">Online · Dummy responses</p>
           </div>
         </div>
 
-        <div className="flex-1 space-y-3 overflow-y-auto p-5">
+        <div className="flex-1 space-y-3 overflow-y-auto p-5" style={{ background: 'var(--bg-secondary)' }}>
           {messages.map((msg) => (
-            <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div
-                className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
-                  msg.role === 'user'
-                    ? 'bg-gradient-to-r from-primary to-accent'
-                    : 'border border-line bg-[#0B1120] text-slate-200'
-                }`}
-              >
+            <div
+              key={msg.id}
+              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              <div className={msg.role === 'user' ? 'chat-bubble-user' : 'chat-bubble-ai'}>
                 {msg.text}
               </div>
             </div>
           ))}
         </div>
 
-        <div className="border-t border-line p-4">
-          <div className="flex items-center gap-2 rounded-2xl border border-line bg-[#0B1120] px-3 py-2">
-            <button className="icon-btn h-9 w-9 border-0 bg-transparent" title="Attachment">
+        <div className="border-t p-4" style={{ borderColor: 'var(--border)', background: 'var(--card)' }}>
+          <div className="composer">
+            <button className="icon-btn-ghost h-9 w-9" title="Attachment">
               <Paperclip size={16} />
             </button>
             <input
@@ -84,14 +80,14 @@ function AgentChat() {
               onChange={(e) => setDraft(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && send()}
               placeholder="Message the AR agent..."
-              className="flex-1 bg-transparent py-2 text-sm"
+              className="composer-input"
             />
-            <button className="icon-btn h-9 w-9 border-0 bg-transparent" title="Microphone">
+            <button className="icon-btn-ghost h-9 w-9" title="Microphone">
               <Mic size={16} />
             </button>
             <button
               onClick={send}
-              className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-r from-primary to-accent"
+              className="flex h-9 w-9 items-center justify-center rounded-btn bg-primary text-white transition-all duration-150 hover:bg-primary-700 hover:scale-[1.05]"
               title="Send"
             >
               <Send size={14} />

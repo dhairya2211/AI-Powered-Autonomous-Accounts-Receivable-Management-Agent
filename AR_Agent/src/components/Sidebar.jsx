@@ -20,35 +20,31 @@ const links = [
 function Sidebar({ open, onClose }) {
   return (
     <>
-      {/* Mobile overlay */}
       {open && (
-        <div
-          className="fixed inset-0 z-40 bg-black/60 lg:hidden"
-          onClick={onClose}
-        />
+        <div className="overlay" onClick={onClose} />
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-[260px] flex-col border-r border-line bg-sidebar transition-transform duration-200 lg:translate-x-0 ${
+        className={`sidebar w-60 ${
           open ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        } lg:translate-x-0`}
       >
-        <div className="flex items-center justify-between px-5 py-6">
+        <div className="flex items-center justify-between px-4 py-5">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent shadow-glow">
+            <div className="flex h-10 w-10 items-center justify-center rounded-btn bg-primary text-white">
               <Sparkles size={18} />
             </div>
             <div>
-              <p className="font-display text-sm font-semibold tracking-wide">AI AR Agent</p>
-              <p className="text-[11px] text-muted">Autonomous v1.0</p>
+              <p className="text-sm font-bold" style={{ color: 'var(--text)' }}>AI AR Agent</p>
+              <p className="text-[11px]" style={{ color: 'var(--text-muted)' }}>Autonomous v1.0</p>
             </div>
           </div>
-          <button className="icon-btn h-8 w-8 lg:hidden" onClick={onClose}>
+          <button className="icon-btn-ghost h-8 w-8 lg:hidden" onClick={onClose} aria-label="Close menu">
             <X size={16} />
           </button>
         </div>
 
-        <nav className="mt-2 flex-1 space-y-1 px-3">
+        <nav className="mt-1 flex-1 space-y-1 px-3">
           {links.map((item) => {
             const Icon = item.icon
             return (
@@ -58,37 +54,24 @@ function Sidebar({ open, onClose }) {
                 end={item.to === '/'}
                 onClick={onClose}
                 className={({ isActive }) =>
-                  `group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition ${
-                    isActive
-                      ? 'bg-gradient-to-r from-primary/20 to-accent/10 text-white shadow-glow'
-                      : 'text-slate-400 hover:bg-white/5 hover:text-white'
-                  }`
+                  `sidebar-link ${isActive ? 'active' : ''}`
                 }
               >
-                {({ isActive }) => (
-                  <>
-                    <span
-                      className={`flex h-9 w-9 items-center justify-center rounded-lg border ${
-                        isActive
-                          ? 'border-primary/40 bg-primary/20 text-primary'
-                          : 'border-transparent bg-white/5 text-slate-400 group-hover:text-white'
-                      }`}
-                    >
-                      <Icon size={16} />
-                    </span>
-                    {item.label}
-                  </>
-                )}
+                <span className="sidebar-icon">
+                  <Icon size={16} />
+                </span>
+                <span>{item.label}</span>
               </NavLink>
             )
           })}
         </nav>
 
-        <div className="m-4 rounded-2xl border border-line bg-white/[0.03] p-4">
-          <p className="text-xs font-medium text-slate-300">Agent health</p>
-          <p className="mt-1 text-[11px] text-muted">All collection tools online</p>
-          <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
-            <div className="h-full w-[86%] rounded-full bg-gradient-to-r from-primary to-accent" />
+        <div className="m-4 rounded-card border p-4"
+             style={{ borderColor: 'var(--border)', background: 'var(--card-secondary)' }}>
+          <p className="text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>Agent health</p>
+          <p className="mt-1 text-[11px]" style={{ color: 'var(--text-muted)' }}>All collection tools online</p>
+          <div className="progress-bar mt-3">
+            <div className="progress-fill w-[86%]" />
           </div>
         </div>
       </aside>
